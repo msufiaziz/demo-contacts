@@ -1,0 +1,163 @@
+﻿@page "/fetchdata"
+@using Sufi.Demo.PeopleDirectory.UI.Client.Pages.Dialogs;
+
+@inject HttpClient Http
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>Contact List</PageTitle>
+
+<MudGrid>
+	<MudItem xs="12">
+		<MudText Typo="Typo.h3">Contact List</MudText>
+	</MudItem>
+	<MudItem xs="12">
+		<MudText Typo="Typo.body1">Behold! Below is the list of all registered users in this application.</MudText>
+	</MudItem>
+	<MudItem xs="12" Class="d-flex gap-4">
+		<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OnButtonRefreshClicked">Refresh</MudButton>
+		<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OnButtonCreateClicked">Create</MudButton>
+	</MudItem>
+	<MudItem xs="12">
+		@if (contacts != null)
+		{
+			<MudTable Items="@contacts" Hover Breakpoint="Breakpoint.Sm" Loading="@loading" LoadingProgressColor="Color.Info" Class="py-3">
+				<HeaderContent>
+					<MudTh>Id</MudTh>
+					<MudTh>Username</MudTh>
+					<MudTh>Phone</MudTh>
+					<MudTh>Email</MudTh>
+					<MudTh>Skill Sets</MudTh>
+					<MudTh>Hobby</MudTh>
+					<MudTh>Action</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Id">@context.Id</MudTd>
+					<MudTd DataLabel="Username">@context.UserName</MudTd>
+					<MudTd DataLabel="Phone">@context.Phone</MudTd>
+					<MudTd DataLabel="Email">@context.Email</MudTd>
+					<MudTd DataLabel="Skill Sets">@context.SkillSets</MudTd>
+					<MudTd DataLabel="Hobby">@context.Hobby</MudTd>
+					<MudTd>
+						<MudTooltip Text="Edit" Placement="Placement.Top" Arrow>
+							<MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => OnEditContactClicked(context.Id)" Color="Color.Warning" Size="Size.Small" />
+						</MudTooltip>
+						<MudTooltip Text="Delete" Placement="Placement.Top" Arrow>
+							<MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => OnDeleteContactClicked(context.Id)" Color="Color.Error" Size="Size.Small" />
+						</MudTooltip>
+					</MudTd>
+				</RowTemplate>
+				<PagerContent>
+					<MudTablePager />
+				</PagerContent>
+			</MudTable>
+		}
+	</MudItem>
+</MudGrid>
+
+<MudOverlay Visible="loading" DarkBackground ZIndex="9999">
+	<MudProgressCircular Color="Color.Primary" Indeterminate />
+</MudOverlay>
+
+@code {
+	private ContactModel[]? contacts;
+	private bool loading;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadTableAsync();
+	}
+
+	private async Task LoadTableAsync()
+	{
+		loading = true;
+
+		contacts = await Http.GetFromJsonAsync<ContactModel[]>("api/contacts/getall");
+
+		loading = false;
+	}
+
+	private async Task OnButtonRefreshClicked()
+	{
+		await LoadTableAsync();
+	}
+
+	private async Task OnButtonCreateClicked()
+	{
+		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialog = await DialogService.ShowAsync<CreateContactDialog>("Create New Contact", dialogOptions);
+		var result = await dialog.Result;
+
+		if (result.Canceled)
+		{
+			return;
+		}
+
+		loading = true;
+		StateHasChanged();
+
+		var contactData = (CreateContactRequest)result.Data;
+		var response = await Http.PostAsJsonAsync("api/contacts/create", contactData);
+		if (response.IsSuccessStatusCode)
+		{
+			Snackbar.Add("New contact created.", Severity.Success);
+			await LoadTableAsync();
+		}
+		else
+		{
+			Snackbar.Add("An error has occurred.", Severity.Error);
+			loading = false;
+		}
+	}
+
+	async Task OnEditContactClicked(int id)
+	{
+		var dialogParams = new DialogParameters { ["Id"] = id };
+		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialog = await DialogService.ShowAsync<EditContactDialog>("Edit Contact", dialogParams, dialogOptions);
+		var result = await dialog.Result;
+		if (result.Canceled)
+		{
+			return;
+		}
+
+		loading = true;
+		StateHasChanged();
+
+		var editRequest = (UpdateContactRequest)result.Data;
+		var response = await Http.PostAsJsonAsync("api/contacts/update", editRequest);
+		if (response.IsSuccessStatusCode)
+		{
+			Snackbar.Add("Contact edited successfully.", Severity.Success);
+			await LoadTableAsync();
+		}
+		else
+		{
+			Snackbar.Add("An error has occurred.", Severity.Error);
+			loading = false;
+		}
+	}
+	async Task OnDeleteContactClicked(int id)
+	{
+		var result = await DialogService.ShowMessageBox("Delete Contact", "Confirm to delete the item? This action cannot be undone.", yesText: "Delete!", cancelText: "No");
+		if (result == null)
+		{
+			return;
+		}
+
+		loading = true;
+		StateHasChanged();
+
+		var deleteResult = await Http.PostAsync($"api/contacts/delete?id={id}", null);
+		if (deleteResult.IsSuccessStatusCode)
+		{
+			Snackbar.Add("Contact deleted successfully.", Severity.Success);
+			await LoadTableAsync();
+		}
+		else
+		{
+			Snackbar.Add("An error has occurred.", Severity.Error);
+			loading = false;
+		}
+	}
+}
