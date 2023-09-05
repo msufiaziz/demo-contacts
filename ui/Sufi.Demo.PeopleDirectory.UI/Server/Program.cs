@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Quartz;
 using Sufi.Demo.PeopleDirectory.Libs.DataContext;
+using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -20,6 +22,20 @@ services.AddEndpointsApiExplorer()
 	{
 		options.SwaggerDoc("v1", new OpenApiInfo { Title = "sufiaziz.my Demo API", Version = "v1" });
 	});
+
+// Some background jobs here.
+services.AddQuartz(options =>
+{
+	var jobKey = new JobKey("ClearPersistentDataJob");
+	options.AddJob<ClearPersistentDataJob>(opt => opt.WithIdentity(jobKey));
+	options.AddTrigger(opt =>
+	{
+		opt.ForJob(jobKey)
+		   .WithIdentity("ClearPersistentDataJob-trigger")
+		   .WithDailyTimeIntervalSchedule(x => x.WithIntervalInMinutes(5));
+	});
+});
+services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
 var app = builder.Build();
 

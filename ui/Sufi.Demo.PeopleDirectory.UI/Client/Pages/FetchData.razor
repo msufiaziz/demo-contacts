@@ -7,12 +7,13 @@
 
 <PageTitle>Contact List</PageTitle>
 
-<MudGrid>
+<MudGrid Class="py-4">
 	<MudItem xs="12">
 		<MudText Typo="Typo.h3">Contact List</MudText>
 	</MudItem>
 	<MudItem xs="12">
 		<MudText Typo="Typo.body1">Behold! Below is the list of all registered users in this application.</MudText>
+		<MudText Typo="Typo.body1" Color="Color.Error">(All data will be deleted for every 5 minutes)</MudText>
 	</MudItem>
 	<MudItem xs="12" Class="d-flex gap-4">
 		<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OnButtonRefreshClicked">Refresh</MudButton>
@@ -72,7 +73,17 @@
 	{
 		loading = true;
 
-		contacts = await Http.GetFromJsonAsync<ContactModel[]>("api/contacts/getall");
+		var response = await Http.GetAsync("api/contacts/getall");
+		if (response.IsSuccessStatusCode)
+		{
+			contacts = await response.Content.ReadFromJsonAsync<ContactModel[]>();
+		}
+		else
+		{
+			contacts = null;
+			var errorMessage = await response.Content.ReadAsStringAsync();
+			Snackbar.Add($"An error has occurred. {errorMessage}.", Severity.Error);
+		}
 
 		loading = false;
 	}

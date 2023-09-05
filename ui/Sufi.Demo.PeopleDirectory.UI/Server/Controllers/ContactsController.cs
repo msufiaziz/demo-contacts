@@ -25,12 +25,19 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers
 		{
 			var result = new List<ContactModel>();
 
-			_context.Contacts.ToList().ForEach(c =>
+			try
 			{
-				result.Add(_mapper.Map<ContactModel>(c));
-			});
+				_context.Contacts.ToList().ForEach(c =>
+				{
+					result.Add(_mapper.Map<ContactModel>(c));
+				});
 
-			return Ok(result);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return Problem(ex.Message);
+			}
 		}
 
 		[HttpGet]
