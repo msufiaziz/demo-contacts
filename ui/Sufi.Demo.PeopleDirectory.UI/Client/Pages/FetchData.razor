@@ -16,8 +16,12 @@
 		<MudText Typo="Typo.body1" Color="Color.Error">(All data will be deleted for every 5 minutes)</MudText>
 	</MudItem>
 	<MudItem xs="12" Class="d-flex gap-4">
-		<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OnButtonRefreshClicked">Refresh</MudButton>
+		
 		<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OnButtonCreateClicked">Create</MudButton>
+
+		<MudSpacer />
+		<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OnButtonRefreshClicked">Refresh</MudButton>
+
 	</MudItem>
 	<MudItem xs="12">
 		@if (contacts != null)

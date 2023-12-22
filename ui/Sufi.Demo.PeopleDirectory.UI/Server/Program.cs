@@ -12,8 +12,9 @@ var configuration = builder.Configuration;
 services.AddAutoMapper(typeof(Program));
 services.AddControllersWithViews();
 services.AddRazorPages();
+services.AddHealthChecks();
 
-var connectionString = configuration.GetConnectionString("MariaDbConnectionString");
+var connectionString = configuration.GetConnectionString("DefaultConnectionString");
 services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString!));
 
 // Register Swagger services.
@@ -49,12 +50,12 @@ else
 	app.UseExceptionHandler("/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
-
-	// Ensure all pending migrations are applied.
-	using var scope = app.Services.CreateScope();
-	var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-	dbContext.Database.Migrate();
 }
+
+// Ensure all pending migrations are applied.
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+dbContext.Database.Migrate();
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -69,7 +70,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.MapHealthChecks("/health");
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
