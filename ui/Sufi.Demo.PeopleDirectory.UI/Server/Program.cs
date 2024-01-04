@@ -1,8 +1,11 @@
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Quartz;
-using Sufi.Demo.PeopleDirectory.Libs.DataContext;
+using Sufi.Demo.PeopleDirectory.Application.Extensions;
+using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
+using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
+using Sufi.Demo.PeropleDirectory.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -10,18 +13,36 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 services.AddAutoMapper(typeof(Program));
+services.AddCurrentUserService();
+
+services.AddApplicationLayer(typeof(Program));
+services.AddApplicationServices();
+services.AddRepositories();
+services.AddInfrastructureMappings();
+
 services.AddControllersWithViews();
 services.AddRazorPages();
+
 services.AddHealthChecks();
 
-var connectionString = configuration.GetConnectionString("DefaultConnectionString");
-services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString!));
+services.AddDatabase(configuration);
+
+services.AddIdentity();
 
 // Register Swagger services.
-services.AddEndpointsApiExplorer()
-	.AddSwaggerGen(options =>
+services.RegisterSwagger();
+var apiVersionBuilder = services.AddApiVersioning(config =>
+{
+	config.DefaultApiVersion = new ApiVersion(1, 0);
+	config.AssumeDefaultVersionWhenUnspecified = true;
+	config.ReportApiVersions = true;
+	config.ApiVersionReader = new QueryStringApiVersionReader("version");
+});
+apiVersionBuilder.AddApiExplorer(
+	options =>
 	{
-		options.SwaggerDoc("v1", new OpenApiInfo { Title = "sufiaziz.my Demo API", Version = "v1" });
+		options.GroupNameFormat = "'v'VVV";
+		options.SubstituteApiVersionInUrl = true;
 	});
 
 // Some background jobs here.
@@ -54,14 +75,10 @@ else
 
 // Ensure all pending migrations are applied.
 using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 dbContext.Database.Migrate();
 
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-	options.SwaggerEndpoint("/swagger/v1/swagger.json", "sufiaziz.my API v1");
-});
+app.ConfigureSwagger();
 
 app.UseHttpsRedirection();
 

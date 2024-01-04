@@ -1,5 +1,4 @@
 ﻿@page "/fetchdata"
-@using Sufi.Demo.PeopleDirectory.UI.Client.Pages.Dialogs;
 
 @inject HttpClient Http
 @inject IDialogService DialogService
@@ -64,8 +63,8 @@
 	<MudProgressCircular Color="Color.Primary" Indeterminate />
 </MudOverlay>
 
-@code {
-	private ContactModel[]? contacts;
+	@code {
+	private GetAllContactsResponse[]? contacts;
 	private bool loading;
 
 	protected override async Task OnInitializedAsync()
@@ -77,16 +76,21 @@
 	{
 		loading = true;
 
-		var response = await Http.GetAsync("api/contacts/getall");
-		if (response.IsSuccessStatusCode)
+		var response = await Http.GetAsync("api/v1/contacts");
+		var result = await response.ToResult<List<GetAllContactsResponse>>();
+
+		if (result.Succeeded)
 		{
-			contacts = await response.Content.ReadFromJsonAsync<ContactModel[]>();
+			contacts = result.Data.ToArray();
 		}
 		else
 		{
 			contacts = null;
-			var errorMessage = await response.Content.ReadAsStringAsync();
-			Snackbar.Add($"An error has occurred. {errorMessage}.", Severity.Error);
+
+			foreach (var message in result.Messages)
+			{
+				Snackbar.Add(message, Severity.Error);
+			}
 		}
 
 		loading = false;
@@ -101,9 +105,9 @@
 	{
 		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<CreateContactDialog>("Create New Contact", dialogOptions);
-		var result = await dialog.Result;
+		var dialogResult = await dialog.Result;
 
-		if (result.Canceled)
+		if (dialogResult.Canceled)
 		{
 			return;
 		}
@@ -111,16 +115,22 @@
 		loading = true;
 		StateHasChanged();
 
-		var contactData = (CreateContactRequest)result.Data;
-		var response = await Http.PostAsJsonAsync("api/contacts/create", contactData);
-		if (response.IsSuccessStatusCode)
+		var contactData = (AddEditContactCommand)dialogResult.Data;
+		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
+		var result = await response.ToResult<int>();
+
+		if (result.Succeeded)
 		{
-			Snackbar.Add("New contact created.", Severity.Success);
+			Snackbar.Add(result.Messages[0], Severity.Success);
 			await LoadTableAsync();
 		}
 		else
 		{
-			Snackbar.Add("An error has occurred.", Severity.Error);
+			foreach (var message in result.Messages)
+			{
+				Snackbar.Add(message, Severity.Error);
+			}
+
 			loading = false;
 		}
 	}
@@ -130,8 +140,8 @@
 		var dialogParams = new DialogParameters { ["Id"] = id };
 		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<EditContactDialog>("Edit Contact", dialogParams, dialogOptions);
-		var result = await dialog.Result;
-		if (result.Canceled)
+		var dialogResult = await dialog.Result;
+		if (dialogResult.Canceled)
 		{
 			return;
 		}
@@ -139,23 +149,29 @@
 		loading = true;
 		StateHasChanged();
 
-		var editRequest = (UpdateContactRequest)result.Data;
-		var response = await Http.PostAsJsonAsync("api/contacts/update", editRequest);
-		if (response.IsSuccessStatusCode)
+		var contactData = (AddEditContactCommand)dialogResult.Data;
+		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
+		var result = await response.ToResult<int>();
+
+		if (result.Succeeded)
 		{
-			Snackbar.Add("Contact edited successfully.", Severity.Success);
+			Snackbar.Add(result.Messages[0], Severity.Success);
 			await LoadTableAsync();
 		}
 		else
 		{
-			Snackbar.Add("An error has occurred.", Severity.Error);
+			foreach (var message in result.Messages)
+			{
+				Snackbar.Add(message, Severity.Error);
+			}
+
 			loading = false;
 		}
 	}
 	async Task OnDeleteContactClicked(int id)
 	{
-		var result = await DialogService.ShowMessageBox("Delete Contact", "Confirm to delete the item? This action cannot be undone.", yesText: "Delete!", cancelText: "No");
-		if (result == null)
+		var dialogResult = await DialogService.ShowMessageBox("Delete Contact", "Confirm to delete the item? This action cannot be undone.", yesText: "Delete!", cancelText: "No");
+		if (dialogResult == null)
 		{
 			return;
 		}
@@ -163,11 +179,19 @@
 		loading = true;
 		StateHasChanged();
 
-		var deleteResult = await Http.PostAsync($"api/contacts/delete?id={id}", null);
-		if (deleteResult.IsSuccessStatusCode)
+		var deleteResponse = await Http.DeleteAsync($"api/v1/contacts/{id}");
+		if (deleteResponse.IsSuccessStatusCode)
 		{
-			Snackbar.Add("Contact deleted successfully.", Severity.Success);
-			await LoadTableAsync();
+			var result = await deleteResponse.ToResult();
+			if (result!.Succeeded)
+			{
+				Snackbar.Add("Contact deleted successfully.", Severity.Success);
+				await LoadTableAsync();
+			}
+			else
+			{
+				Snackbar.Add(result.Messages[0], Severity.Error);
+			}
 		}
 		else
 		{

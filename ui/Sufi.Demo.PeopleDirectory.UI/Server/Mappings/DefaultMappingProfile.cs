@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Sufi.Demo.PeopleDirectory.Libs.DataContext.Entities;
+using Sufi.Demo.PeopleDirectory.Application.Responses;
+using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 using Sufi.Demo.PeopleDirectory.UI.Shared;
 
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Mappings
@@ -9,7 +10,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Mappings
 		public DefaultMappingProfile() 
 		{
 			CreateMap<Contact, ContactModel>();
-			CreateMap<CreateContactRequest, Contact>();
+			CreateMap<Contact, ContactResponse>();
 		}
 	}
 }

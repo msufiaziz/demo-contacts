@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sufi.Demo.PeopleDirectory.Domain\Sufi.Demo.PeopleDirectory.Domain.csproj" />
+    <ProjectReference Include="..\Sufi.Demo.PeopleDirectory.Shared\Sufi.Demo.PeopleDirectory.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

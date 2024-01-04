@@ -22,14 +22,14 @@
 	[Parameter]
 	public int Id { get; set; }
 
-	private UpdateContactRequest request = new();
+	private AddEditContactCommand request = new();
 	private MudForm? form;
 	private bool success;
 	private string[] errors = { };
 
 	protected override async Task OnInitializedAsync()
 	{
-		var contact = await Http.GetFromJsonAsync<ContactModel>($"api/contacts/get?id={Id}");
+		var contact = await Http.GetFromJsonAsync<ContactModel>($"api/v1/contacts/{Id}");
 		request.Id = Id;
 		request.UserName = contact!.UserName;
 		request.Email = contact.Email;
