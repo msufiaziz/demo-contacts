@@ -19,9 +19,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -o ${{ secrets.REPO_ARTIFACT_DIR }}\demo-contact
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4.0.0
+      with:
+        name: demo-contact-artifact-${{ github.run_id }}-${{ github.run_attempt }}
+        path: ${{ secrets.REPO_ARTIFACT_DIR }}\demo-contact
 
   publish:
     runs-on: self-hosted
@@ -32,5 +37,7 @@ jobs:
     - name: Publish to IIS
       run: |
           Stop-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
+          Stop-WebAppPool -Name ${{ secrets.IIS_APP_POOL }}
           dotnet publish "${{ github.workspace }}\$BUILD_PROJ" -c Release -o ${{ secrets.IIS_DEPLOY_DIR }}
+          Start-WebAppPool -Name ${{ secrets.IIS_APP_POOL }}
           Start-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
