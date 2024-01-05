@@ -16,10 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -30,11 +26,11 @@ jobs:
   publish:
     runs-on: self-hosted
 
-    steps:
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
+    needs: build
 
-    - name: Publish Project
-      run: dotnet publish "${{ github.workspace }}\ui\Sufi.Demo.PeopleDirectory.UI\Server\Sufi.Demo.PeopleDirectory.UI.Server.csproj" -c Release -o "C:\Deployed\demo-contact"
+    steps:
+    - name: Publish to IIS
+      run: |
+          Stop-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
+          dotnet publish "${{ github.workspace }}\$BUILD_PROJ" -c Release -o ${{ secrets.IIS_DEPLOY_DIR }}
+          Start-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
