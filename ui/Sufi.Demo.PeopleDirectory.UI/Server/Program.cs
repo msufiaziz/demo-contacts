@@ -80,8 +80,6 @@ dbContext.Database.Migrate();
 
 app.ConfigureSwagger();
 
-app.UseHttpsRedirection();
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
