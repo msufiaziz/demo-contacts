@@ -1,4 +1,9 @@
-﻿namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
+﻿using Microsoft.EntityFrameworkCore;
+using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 {
 	public static class ApplicationBuilderExtensions
 	{
@@ -16,6 +21,17 @@
 						desc.GroupName.ToUpperInvariant());
 				}
 			});
+		}
+
+		internal static IApplicationBuilder EnsureDatabaseMigration(this IApplicationBuilder app)
+		{
+			using (var scope = app.ApplicationServices.CreateScope())
+			{
+				var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+				dbContext.Database.Migrate();
+			}
+
+			return app;
 		}
 	}
 }

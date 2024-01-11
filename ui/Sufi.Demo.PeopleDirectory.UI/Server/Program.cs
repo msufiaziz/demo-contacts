@@ -1,10 +1,7 @@
-using Asp.Versioning;
-using Microsoft.EntityFrameworkCore;
 using Quartz;
 using Sufi.Demo.PeopleDirectory.Application.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
 using Sufi.Demo.PeropleDirectory.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,17 +29,6 @@ services.AddIdentity();
 // Register Swagger services.
 services.AddEndpointsApiExplorer();
 services.RegisterSwagger();
-services.AddApiVersioning(config =>
-{
-	config.DefaultApiVersion = new ApiVersion(1, 0);
-	config.AssumeDefaultVersionWhenUnspecified = true;
-	config.ApiVersionReader = new UrlSegmentApiVersionReader();
-})
-	.AddApiExplorer(options =>
-	{
-		options.GroupNameFormat = "'v'VVV";
-		options.SubstituteApiVersionInUrl = true;
-	});
 
 // Some background jobs here.
 services.AddQuartz(options =>
@@ -73,9 +59,7 @@ else
 }
 
 // Ensure all pending migrations are applied.
-using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-dbContext.Database.Migrate();
+app.EnsureDatabaseMigration();
 
 app.ConfigureSwagger();
 

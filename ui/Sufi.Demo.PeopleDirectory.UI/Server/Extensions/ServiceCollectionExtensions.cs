@@ -77,7 +77,18 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 				}
 
 				c.OperationFilter<SwaggerDefaultValues>();
-			});
+			})
+				.AddApiVersioning(config =>
+				{
+					config.DefaultApiVersion = new ApiVersion(1, 0);
+					config.AssumeDefaultVersionWhenUnspecified = true;
+					config.ApiVersionReader = new UrlSegmentApiVersionReader();
+				})
+				.AddApiExplorer(options =>
+				{
+					options.GroupNameFormat = "'v'VVV";
+					options.SubstituteApiVersionInUrl = true;
+				});
 		}
 	}
 
