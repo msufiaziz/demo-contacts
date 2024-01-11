@@ -8,7 +8,6 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[ApiController]
-	[Route("api/v{version:apiVersion}/[controller]")]
 	public abstract class BaseApiController<T> : ControllerBase
 	{
 		private IMediator? _mediatorInstance;

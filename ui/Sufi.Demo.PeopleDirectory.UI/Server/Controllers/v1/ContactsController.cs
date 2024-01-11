@@ -21,6 +21,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v1
     /// 
     /// </summary>
 	[ApiVersion(1.0)]
+	[Route("api/v{version:apiVersion}/[controller]")]
 	public class ContactsController : BaseApiController<ContactsController>
     {
         private readonly ApplicationDbContext _context;

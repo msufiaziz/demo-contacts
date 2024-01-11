@@ -7,9 +7,14 @@
 			app.UseSwagger();
 			app.UseSwaggerUI(options =>
 			{
-				options.SwaggerEndpoint("/swagger/v1/swagger.json", typeof(Program).Assembly.GetName().Name);
 				options.RoutePrefix = "swagger";
 				options.DisplayRequestDuration();
+
+				foreach (var desc in ((IEndpointRouteBuilder)app).DescribeApiVersions())
+				{
+					options.SwaggerEndpoint($"{desc.GroupName}/swagger.json", 
+						desc.GroupName.ToUpperInvariant());
+				}
 			});
 		}
 	}

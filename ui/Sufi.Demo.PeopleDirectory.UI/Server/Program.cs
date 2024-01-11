@@ -30,16 +30,15 @@ services.AddDatabase(configuration);
 services.AddIdentity();
 
 // Register Swagger services.
+services.AddEndpointsApiExplorer();
 services.RegisterSwagger();
-var apiVersionBuilder = services.AddApiVersioning(config =>
+services.AddApiVersioning(config =>
 {
 	config.DefaultApiVersion = new ApiVersion(1, 0);
 	config.AssumeDefaultVersionWhenUnspecified = true;
-	config.ReportApiVersions = true;
-	config.ApiVersionReader = new QueryStringApiVersionReader("version");
-});
-apiVersionBuilder.AddApiExplorer(
-	options =>
+	config.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+	.AddApiExplorer(options =>
 	{
 		options.GroupNameFormat = "'v'VVV";
 		options.SubstituteApiVersionInUrl = true;
