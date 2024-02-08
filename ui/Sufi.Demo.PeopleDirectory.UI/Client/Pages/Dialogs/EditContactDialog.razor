@@ -1,7 +1,13 @@
-﻿@inject HttpClient Http
+﻿@using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetById
+
+@inject HttpClient Http
 
 <MudDialog>
 	<DialogContent>
+		@if (showAlert)
+		{
+			<MudAlert Severity="Severity.Error">@alertMessage</MudAlert>
+		}
 		<MudForm @ref="form" Model="request" @bind-IsValid="success" @bind-Errors="errors">
 			<MudTextField Label="Username" Required @bind-Value="request.UserName" />
 			<MudTextField Label="Email" Required @bind-Value="request.Email" />
@@ -16,7 +22,7 @@
 	</DialogActions>
 </MudDialog>
 
-@code {
+	@code {
 	[CascadingParameter]
 	private MudDialogInstance MudDialog { get; set; } = null!;
 	[Parameter]
@@ -26,16 +32,31 @@
 	private MudForm? form;
 	private bool success;
 	private string[] errors = { };
+	private bool showAlert;
+	private string? alertMessage;
 
 	protected override async Task OnInitializedAsync()
 	{
-		var contact = await Http.GetFromJsonAsync<ContactModel>($"api/v1/contacts/{Id}");
-		request.Id = Id;
-		request.UserName = contact!.UserName;
-		request.Email = contact.Email;
-		request.Phone = contact.Phone;
-		request.SkillSets = contact.SkillSets;
-		request.Hobby = contact.Hobby;
+		var response = await Http.GetAsync($"api/v1/contacts/{Id}");
+		var result = await response.ToResult<GetContactByIdResponse>();
+		if (result.Succeeded)
+		{
+			var contact = result.Data;
+			request.Id = Id;
+			request.UserName = contact!.UserName;
+			request.Email = contact.Email;
+			request.Phone = contact.Phone;
+			request.SkillSets = contact.SkillSets;
+			request.Hobby = contact.Hobby;
+
+			showAlert = false;
+			alertMessage = "";
+		}
+		else
+		{
+			showAlert = true;
+			alertMessage = string.Join(',', result.Messages);
+		}
 	}
 
 	private void Cancel() => MudDialog.Cancel();

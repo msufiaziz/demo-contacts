@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v2
 {
 	[ApiVersion(2.0)]
-	[Route("api/v{version:apiVersion}/infra")]
-	public class Infra2Controller : BaseApiController<Infra2Controller>
+	public class InfraController : BaseApiController<InfraController>
 	{
 		[Route("ping")]
 		[HttpGet]

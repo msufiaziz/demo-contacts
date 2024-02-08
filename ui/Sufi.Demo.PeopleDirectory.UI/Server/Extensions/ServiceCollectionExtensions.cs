@@ -16,6 +16,9 @@ using System.Text.Json;
 
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 {
+	/// <summary>
+	/// Extension class.
+	/// </summary>
 	public static class ServiceCollectionExtensions
 	{
 		internal static IServiceCollection AddApplicationServices(this IServiceCollection services)

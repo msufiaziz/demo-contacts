@@ -16,7 +16,6 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Extensions
 		{
 			return services
 				.AddTransient(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>))
-				.AddTransient<IContactRepository, ContactRepository>()
 				.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 		}
 	}

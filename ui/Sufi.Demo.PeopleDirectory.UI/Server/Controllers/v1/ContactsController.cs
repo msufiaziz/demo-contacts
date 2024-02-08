@@ -1,41 +1,24 @@
 ﻿using Asp.Versioning;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetAll;
-using Sufi.Demo.PeopleDirectory.UI.Shared;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
+using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetById;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v1
 {
-    [ApiVersion(2.0)]
-	[Route("api/v{version:apiVersion}/contacts")]
-	public class Contacts2Controller : BaseApiController<Contacts2Controller>
-    {
-        [HttpGet]
-        public IActionResult Get() => Ok();
-    }
-
     /// <summary>
-    /// 
+    /// A controller for manipulating contact data.
     /// </summary>
 	[ApiVersion(1.0)]
-	[Route("api/v{version:apiVersion}/[controller]")]
 	public class ContactsController : BaseApiController<ContactsController>
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
 		/// <summary>
 		/// Initialize an instance of <see cref="ContactsController"/> class.
 		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="mapper"></param>
-		public ContactsController(ApplicationDbContext context, IMapper mapper)
+		public ContactsController()
         {
-            _context = context;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -45,8 +28,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var contacts = await Mediator.Send(new GetAllContactsQuery());
-            return Ok(contacts);
+            return Ok(await Mediator.Send(new GetAllContactsQuery()));
         }
 
         /// <summary>
@@ -55,11 +37,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v1
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public ContactModel Get(int id)
-        {
-            var contact = _context.Contacts.Find(id);
-            return _mapper.Map<ContactModel>(contact);
-        }
+        public async Task<IActionResult> Get(int id) => Ok(await  Mediator.Send(new GetContactByIdQuery { Id = id }));
 
         /// <summary>
         /// Create/Update a contact.

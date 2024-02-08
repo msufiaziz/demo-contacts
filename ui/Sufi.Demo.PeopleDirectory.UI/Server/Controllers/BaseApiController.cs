@@ -8,6 +8,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[ApiController]
+	[Route("api/v{version:apiVersion}/[controller]")]
 	public abstract class BaseApiController<T> : ControllerBase
 	{
 		private IMediator? _mediatorInstance;
@@ -17,6 +18,9 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers
 		/// Gets the mediator for requests/responses.
 		/// </summary>
 		protected IMediator Mediator => _mediatorInstance ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+		/// <summary>
+		/// Gets the logger for current controller.
+		/// </summary>
 		protected ILogger<T> Logger => _loggerInstance ??= HttpContext.RequestServices.GetRequiredService<ILogger<T>>();
 	}
 }

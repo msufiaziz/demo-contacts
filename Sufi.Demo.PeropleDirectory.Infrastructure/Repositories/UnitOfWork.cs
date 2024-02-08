@@ -21,7 +21,7 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Repositories
 
 		public IRepositoryAsync<TEntity, TId> Repository<TEntity>() where TEntity : AuditableEntity<TId>
 		{
-			_repositories ??= new Hashtable();
+			_repositories ??= [];
 
 			var type = typeof(TEntity).Name;
 
@@ -34,7 +34,7 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Repositories
 				_repositories.Add(type, repositoryInstance);
 			}
 
-			return (IRepositoryAsync<TEntity, TId>)_repositories[type];
+			return (IRepositoryAsync<TEntity, TId>)_repositories[type]!;
 		}
 
 		public async Task<int> Commit(CancellationToken cancellationToken)
