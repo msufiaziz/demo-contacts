@@ -29,6 +29,7 @@ jobs:
         path: ${{ secrets.REPO_ARTIFACT_DIR }}\demo-contact
 
   publish:
+    if: github.ref_name == "main"
     runs-on: self-hosted
 
     needs: build
