@@ -9,11 +9,11 @@
 			<MudAlert Severity="Severity.Error">@alertMessage</MudAlert>
 		}
 		<MudForm @ref="form" Model="request" @bind-IsValid="success" @bind-Errors="errors">
-			<MudTextField Label="Username" Required @bind-Value="request.UserName" />
-			<MudTextField Label="Email" Required @bind-Value="request.Email" />
-			<MudTextField Label="Phone" Required @bind-Value="request.Phone" />
-			<MudTextField Label="Skill Sets" Required @bind-Value="request.SkillSets" />
-			<MudTextField Label="Hobby" Required @bind-Value="request.Hobby" />
+			<MudTextField Label="Username" Required="true" @bind-Value="request.UserName" />
+			<MudTextField Label="Email" Required="true" @bind-Value="request.Email" />
+			<MudTextField Label="Phone" Required="true" @bind-Value="request.Phone" />
+			<MudTextField Label="Skill Sets" Required="true" @bind-Value="request.SkillSets" />
+			<MudTextField Label="Hobby" Required="true" @bind-Value="request.Hobby" />
 		</MudForm>
 	</DialogContent>
 	<DialogActions>
@@ -22,7 +22,7 @@
 	</DialogActions>
 </MudDialog>
 
-	@code {
+@code {
 	[CascadingParameter]
 	private MudDialogInstance MudDialog { get; set; } = null!;
 	[Parameter]

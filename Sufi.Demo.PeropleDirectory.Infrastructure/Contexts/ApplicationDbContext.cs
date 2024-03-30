@@ -56,41 +56,20 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Contexts
 
 			base.OnModelCreating(builder);
 
-			builder.Entity<AppUser>(entity =>
-			{
-				entity.ToTable("Users");
-				entity.Property(e => e.Id).ValueGeneratedOnAdd();
-			});
+			var assembly = typeof(ApplicationDbContext).Assembly;
+			builder.ApplyConfigurationsFromAssembly(assembly);
 
-			builder.Entity<AppRole>(entity =>
-			{
-				entity.ToTable("Roles");
-			});
+			builder.Entity<AppRole>(entity => entity.ToTable("Roles", "Identity"));
 
-			builder.Entity<IdentityUserRole<string>>(entity =>
-			{
-				entity.ToTable("UserRoles");
-			});
+			builder.Entity<IdentityUserRole<string>>(entity => entity.ToTable("UserRoles", "Identity"));
 
-			builder.Entity<IdentityUserClaim<string>>(entity =>
-			{
-				entity.ToTable("UserClaims");
-			});
+			builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims", "Identity"));
 
-			builder.Entity<IdentityUserLogin<string>>(entity =>
-			{
-				entity.ToTable("UserLogins");
-			});
+			builder.Entity<IdentityUserLogin<string>>(entity => entity.ToTable("UserLogins", "Identity"));
 
-			builder.Entity<AppRoleClaim>(entity =>
-			{
-				entity.ToTable("RoleClaims");
-			});
+			builder.Entity<AppRoleClaim>(entity => entity.ToTable("RoleClaims", "Identity"));
 
-			builder.Entity<IdentityUserToken<string>>(entity =>
-			{
-				entity.ToTable("UserTokens");
-			});
+			builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens", "Identity"));
 		}
 
 		private void PopulateAuditRecords()
