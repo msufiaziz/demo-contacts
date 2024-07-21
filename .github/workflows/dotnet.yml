@@ -5,7 +5,7 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/**" ]
   pull_request:
     branches: [ "main" ]
 
@@ -35,6 +35,12 @@ jobs:
     if: github.ref_name == 'main'
     
     steps:
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: 'ui\Sufi.Demo.PeopleDirectory.UI\Server\appsettings.json'
+      env:
+        ConnectionStrings.DefaultConnectionString: ${{ secrets.CONNECTIONSTRING }}
     - name: Publish to IIS
       run: |
           Stop-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}

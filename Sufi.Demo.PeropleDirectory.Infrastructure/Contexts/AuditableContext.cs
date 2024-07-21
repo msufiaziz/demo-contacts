@@ -16,6 +16,13 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Contexts
 
 		public DbSet<Audit> AuditTrails { get; set; } = null!;
 
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			base.OnModelCreating(builder);
+
+			builder.Entity<Audit>().ToTable("AuditTrails", "Audit");
+		}
+
 		public virtual async Task<int> SaveChangesAsync(string? userId = null, CancellationToken cancellationToken = new())
 		{
 			var auditEntries = OnBeforeSaveChanges(userId);
