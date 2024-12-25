@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Reflection;
 
 namespace Sufi.Demo.PeopleDirectory.Application.Extensions

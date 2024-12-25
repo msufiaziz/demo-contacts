@@ -4,6 +4,7 @@ using Serilog.Events;
 using Sufi.Demo.PeopleDirectory.Application.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
+using Sufi.Demo.PeopleDirectory.UI.Server.Middlewares;
 using Sufi.Demo.PeropleDirectory.Infrastructure.Extensions;
 
 Log.Logger = new LoggerConfiguration()
@@ -53,7 +54,9 @@ try
 		{
 			opt.ForJob(jobKey)
 			   .WithIdentity("ClearPersistentDataJob-trigger")
-			   .WithDailyTimeIntervalSchedule(x => x.WithIntervalInMinutes(5));
+			   .WithSimpleSchedule(x => x
+					.WithIntervalInMinutes(5)
+					.RepeatForever());
 		});
 	});
 	services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
@@ -83,6 +86,7 @@ try
 	app.UseStaticFiles();
 
 	app.UseRouting();
+	app.UseMiddleware<RateLimitingMiddleware>(100, TimeSpan.FromMinutes(1));	// Limit to 100 requests per minute per IP.
 
 	app.MapHealthChecks("/health");
 	app.MapRazorPages();

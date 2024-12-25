@@ -1,54 +1,55 @@
 ﻿using Quartz;
 using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Repositories;
 
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Jobs
 {
 	/// <summary>
 	/// Represents the cleanup job.
 	/// </summary>
-	public class ClearPersistentDataJob : IJob
+	/// <remarks>
+	/// Initialize an instance of <see cref="ClearPersistentDataJob"/> class.
+	/// </remarks>
+	/// <param name="unitOfWorkInt"></param>
+	/// <param name="unitOfWorkString"></param>
+	public class ClearPersistentDataJob(IUnitOfWork<int> unitOfWorkInt, IUnitOfWork<string> unitOfWorkString) : IJob
 	{
 		private const string LastDateDeletedKey = "LastDateDeleted";
 		private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.ffff";
-		private readonly IUnitOfWork<int> _unitOfWorkInt;
-		private readonly IUnitOfWork<string> _unitOfWorkString;
 
 		/// <summary>
-		/// Initialize an instance of <see cref="ClearPersistentDataJob"/> class.
+		/// Job implementation to be executed.
 		/// </summary>
-		/// <param name="unitOfWorkInt"></param>
-		/// <param name="unitOfWorkString"></param>
-		public ClearPersistentDataJob(IUnitOfWork<int> unitOfWorkInt, IUnitOfWork<string> unitOfWorkString)
-		{
-			_unitOfWorkInt = unitOfWorkInt;
-			_unitOfWorkString = unitOfWorkString;
-		}
-
+		/// <param name="context"></param>
+		/// <returns></returns>
 		public async Task Execute(IJobExecutionContext context)
 		{
-			var contactsToDelete = await _unitOfWorkInt.Repository<Contact>().GetAllAsync();
+			// Get all contacts to be deleted.
+			var contactsToDelete = await unitOfWorkInt.Repository<Contact>().GetAllAsync();
+
+			// Skips if nothing to delete.
+			if (contactsToDelete.Count == 0)
+				return;
+			
 			foreach (var contact in contactsToDelete)
 			{
-				await _unitOfWorkInt.Repository<Contact>().DeleteAsync(contact);
+				await unitOfWorkInt.Repository<Contact>().DeleteAsync(contact);
 			}
-			await _unitOfWorkInt.Commit(context.CancellationToken);
+			await unitOfWorkInt.Commit(context.CancellationToken);
 
-			var infoToUpdate = await _unitOfWorkString.Repository<ServerInfo>().GetByIdAsync(LastDateDeletedKey);
+			var infoToUpdate = await unitOfWorkString.Repository<ServerInfo>().GetByIdAsync(LastDateDeletedKey);
 			if (infoToUpdate != null)
 			{
 				infoToUpdate.Value = DateTime.UtcNow.ToString(DateTimeFormat);
-				await _unitOfWorkString.Repository<ServerInfo>().UpdateAsync(infoToUpdate);
+				await unitOfWorkString.Repository<ServerInfo>().UpdateAsync(infoToUpdate);
 			}
 			else
 			{
 				var infoToAdd = new ServerInfo { Id = LastDateDeletedKey, Value = DateTime.UtcNow.ToString(DateTimeFormat) };
-				await _unitOfWorkString.Repository<ServerInfo>().AddAsync(infoToAdd);
+				await unitOfWorkString.Repository<ServerInfo>().AddAsync(infoToAdd);
 			}
 
-			await _unitOfWorkString.Commit(context.CancellationToken);
+			await unitOfWorkString.Commit(context.CancellationToken);
 		}
 	}
 }
