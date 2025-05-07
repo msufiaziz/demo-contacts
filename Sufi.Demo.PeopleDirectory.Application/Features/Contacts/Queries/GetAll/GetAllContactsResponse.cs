@@ -1,6 +1,6 @@
 ﻿namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetAll
 {
-	public class GetAllContactsResponse
+	public record GetAllContactsResponse
 	{
 		public int Id { get; set; }
 		public string UserName { get; set; } = null!;

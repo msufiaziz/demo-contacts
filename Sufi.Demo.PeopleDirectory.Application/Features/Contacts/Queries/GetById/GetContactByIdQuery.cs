@@ -3,31 +3,23 @@ using MediatR;
 using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 using Sufi.Demo.PeopleDirectory.Shared.Wrapper;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetById
 {
-	public class GetContactByIdQuery : IRequest<Result<GetContactByIdResponse>>
+	public class GetContactByIdQuery : IRequest<IResult<GetContactByIdResponse>>
 	{
 		public int Id { get; set; }
 	}
 
-	public class GetContactByIdQueryHandler : IRequestHandler<GetContactByIdQuery, Result<GetContactByIdResponse>>
+	public class GetContactByIdQueryHandler(
+		IUnitOfWork<int> unitOfWork, 
+		IMapper mapper
+		) : IRequestHandler<GetContactByIdQuery, IResult<GetContactByIdResponse>>
 	{
-		private readonly IUnitOfWork<int> _unitOfWork;
-		private readonly IMapper _mapper;
-
-		public GetContactByIdQueryHandler(IUnitOfWork<int> unitOfWork, IMapper mapper)
+		public async Task<IResult<GetContactByIdResponse>> Handle(GetContactByIdQuery request, CancellationToken cancellationToken)
 		{
-			_unitOfWork = unitOfWork;
-			_mapper = mapper;
-		}
-
-		public async Task<Result<GetContactByIdResponse>> Handle(GetContactByIdQuery request, CancellationToken cancellationToken)
-		{
-			var contact = await _unitOfWork.Repository<Contact>().GetByIdAsync(request.Id);
-			var mappedContact = _mapper.Map<GetContactByIdResponse>(contact);
+			var contact = await unitOfWork.Repository<Contact>().GetByIdAsync(request.Id);
+			var mappedContact = mapper.Map<GetContactByIdResponse>(contact);
 			return await Result<GetContactByIdResponse>.SuccessAsync(mappedContact);
 		}
 	}

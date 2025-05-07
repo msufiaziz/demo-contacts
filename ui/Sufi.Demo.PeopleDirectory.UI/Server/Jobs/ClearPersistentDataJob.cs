@@ -30,13 +30,17 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Jobs
 			// Skips if nothing to delete.
 			if (contactsToDelete.Count == 0)
 				return;
-			
+
+			// Delete all contacts.
 			foreach (var contact in contactsToDelete)
 			{
 				await unitOfWorkInt.Repository<Contact>().DeleteAsync(contact);
 			}
+
+			// Commit the changes to the database.
 			await unitOfWorkInt.Commit(context.CancellationToken);
 
+			// Update the last date deleted in the ServerInfo table.
 			var infoToUpdate = await unitOfWorkString.Repository<ServerInfo>().GetByIdAsync(LastDateDeletedKey);
 			if (infoToUpdate != null)
 			{
@@ -49,6 +53,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Jobs
 				await unitOfWorkString.Repository<ServerInfo>().AddAsync(infoToAdd);
 			}
 
+			// Commit the changes to the database.
 			await unitOfWorkString.Commit(context.CancellationToken);
 		}
 	}

@@ -13,30 +13,19 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Controllers.v1
 	[ApiVersion(1.0)]
 	public class ContactsController : BaseApiController<ContactsController>
     {
-
-		/// <summary>
-		/// Initialize an instance of <see cref="ContactsController"/> class.
-		/// </summary>
-		public ContactsController()
-        {
-        }
-
         /// <summary>
         /// Get all contacts.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await Mediator.Send(new GetAllContactsQuery()));
-        }
+        public async Task<IActionResult> GetAll() => Ok(await Mediator.Send(new GetAllContactsQuery()));
 
-        /// <summary>
-        /// Get a contact by id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
+		/// <summary>
+		/// Get a contact by id.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpGet("{id}")]
         public async Task<IActionResult> Get(int id) => Ok(await  Mediator.Send(new GetContactByIdQuery { Id = id }));
 
         /// <summary>
