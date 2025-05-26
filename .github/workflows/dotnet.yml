@@ -20,14 +20,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -o $ARTIFACT_DIR/output
+      run: dotnet build --no-restore -o "$ARTIFACT_DIR/output"
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.0.0
       with:
         name: demo-contact-artifact-${{ github.run_id }}-${{ github.run_attempt }}
-        path: $ARTIFACT_DIR/output
+        path: "$ARTIFACT_DIR/output"
 
   publish:
     runs-on: self-hosted
