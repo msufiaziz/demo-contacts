@@ -1,27 +1,28 @@
 using Quartz;
 using Serilog;
-using Serilog.Events;
 using Sufi.Demo.PeopleDirectory.Application.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
 using Sufi.Demo.PeopleDirectory.UI.Server.Middlewares;
 using Sufi.Demo.PeropleDirectory.Infrastructure.Extensions;
 
-Log.Logger = new LoggerConfiguration()
-	//.MinimumLevel.Debug()
-	.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-	.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-	.MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-	.Enrich.FromLogContext()
-	.WriteTo.File("C:\\Logs\\demo-contact\\log-.log", rollingInterval: RollingInterval.Day)
-	.CreateLogger();
-
 try
 {
 	var builder = WebApplication.CreateBuilder(args);
-	builder.Host.UseSerilog();
-	var services = builder.Services;
+	builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
+		.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+		.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true);
 	var configuration = builder.Configuration;
+
+	Log.Logger = new LoggerConfiguration()
+		.ReadFrom.Configuration(configuration)
+		.CreateLogger();
+
+	builder.Host.UseSerilog((context, services, configuration) =>
+	{
+		configuration.ReadFrom.Configuration(context.Configuration);
+	});
+	var services = builder.Services;
 
 	// Add services to the container.
 	services.AddAutoMapper(typeof(Program));
@@ -86,7 +87,7 @@ try
 	app.UseStaticFiles();
 
 	app.UseRouting();
-	app.UseMiddleware<RateLimitingMiddleware>(100, TimeSpan.FromMinutes(1));	// Limit to 100 requests per minute per IP.
+	app.UseMiddleware<RateLimitingMiddleware>(100, TimeSpan.FromMinutes(1));    // Limit to 100 requests per minute per IP.
 
 	app.MapHealthChecks("/health");
 	app.MapRazorPages();
