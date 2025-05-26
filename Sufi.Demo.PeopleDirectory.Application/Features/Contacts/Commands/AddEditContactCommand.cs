@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 using Sufi.Demo.PeopleDirectory.Shared.Wrapper;
@@ -24,9 +25,10 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
 		public string Hobby { get; set; } = "Hobby";
 	}
 
-	internal class AddEditContactCommandHandler(
+	public class AddEditContactCommandHandler(
 		IMapper mapper, 
-		IUnitOfWork<int> unitOfWork
+		IUnitOfWork<int> unitOfWork,
+		ILogger<AddEditContactCommandHandler> logger
 		) : IRequestHandler<AddEditContactCommand, IResult<int>>
 	{
 		public async Task<IResult<int>> Handle(AddEditContactCommand command, CancellationToken cancellationToken)
@@ -43,6 +45,9 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
                 var contact = mapper.Map<Contact>(command);
 				await unitOfWork.Repository<Contact>().AddAsync(contact);
 				await unitOfWork.Commit(cancellationToken);
+
+				logger.LogInformation("New contact added with ID: {Id}", contact.Id);
+
 				return await Result<int>.SuccessAsync(contact.Id, "New contact saved.");
 			}
 			else
@@ -57,10 +62,15 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
 					contact.SkillSets = command.SkillSets;
 					await unitOfWork.Repository<Contact>().UpdateAsync(contact);
 					await unitOfWork.Commit(cancellationToken);
+
+					logger.LogInformation("Contact updated with ID: {Id}", contact.Id);
+
 					return await Result<int>.SuccessAsync(contact.Id, "Contact updated.");
 				}
 				else
 				{
+					logger.LogWarning("Contact not found with ID: {Id}", command.Id);
+
 					return await Result<int>.FailAsync("Contact not found!");
 				}
 			}
