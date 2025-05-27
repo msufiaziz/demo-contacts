@@ -44,5 +44,5 @@ jobs:
         ConnectionStrings.DefaultConnectionString: ${{ secrets.CONNECTIONSTRING }}
     - name: Publish to Services
       run: |
-          dotnet publish "${{ github.workspace }}/${{ vars.BUILD_PROJ }}" -c Release -o ${{ vars.DEPLOY_DIR }} &&
+          dotnet publish "${{ github.workspace }}/${{ vars.BUILD_PROJ }}" -c Release -o ${{ vars.DEPLOY_DIR }}
           systemctl restart $APP_NAME
