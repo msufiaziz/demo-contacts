@@ -35,7 +35,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 		}
 
 		internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
-			=> services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")!));
+			=> services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnectionString")!));
 
 		internal static IServiceCollection AddIdentity(this IServiceCollection services)
 		{

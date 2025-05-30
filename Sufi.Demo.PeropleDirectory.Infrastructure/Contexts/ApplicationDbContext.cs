@@ -51,7 +51,7 @@ namespace Sufi.Demo.PeropleDirectory.Infrastructure.Contexts
 				.SelectMany(t => t.GetProperties())
 				.Where(p => p.Name is "LastModifiedBy" or "CreatedBy"))
 			{
-				property.SetColumnType("nvarchar(128)");
+				property.SetColumnType("character varying(100)");
 			}
 
 			base.OnModelCreating(builder);

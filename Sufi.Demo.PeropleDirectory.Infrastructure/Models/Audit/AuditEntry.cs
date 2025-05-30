@@ -4,14 +4,9 @@ using System.Text.Json;
 
 namespace Sufi.Demo.PeropleDirectory.Infrastructure.Models.Audit
 {
-	public class AuditEntry
+	public class AuditEntry(EntityEntry entry)
 	{
-		public AuditEntry(EntityEntry entry)
-		{
-			Entry = entry;
-		}
-
-		public EntityEntry Entry { get; }
+		public EntityEntry Entry { get; } = entry;
 		public string? UserId { get; set; }
 		public string TableName { get; set; } = null!;
 		public Dictionary<string, object?> KeyValues { get; } = new();
