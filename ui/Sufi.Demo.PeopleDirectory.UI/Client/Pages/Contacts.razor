@@ -76,9 +76,6 @@
 	{
 		loading = true;
 
-		// Simulate long waiting time.
-		await Task.Delay(2000);
-
 		var response = await Http.GetAsync("api/v1/contacts");
 		var result = await response.ToResult<List<GetAllContactsResponse>>();
 
@@ -118,9 +115,6 @@
 		loading = true;
 		StateHasChanged();
 
-		// Simulate long waiting time.
-		await Task.Delay(500);
-
 		var contactData = (AddEditContactCommand)dialogResult.Data;
 		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
 		var result = await response.ToResult<int>();
@@ -154,9 +148,6 @@
 
 		loading = true;
 		StateHasChanged();
-
-		// Simulate long waiting time.
-		await Task.Delay(2000);
 
 		var contactData = (AddEditContactCommand)dialogResult.Data;
 		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
