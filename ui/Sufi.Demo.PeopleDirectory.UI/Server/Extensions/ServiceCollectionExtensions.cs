@@ -95,18 +95,11 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 		}
 	}
 
-	public class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
+	internal class ConfigureSwaggerGenOptions(IApiVersionDescriptionProvider provider) : IConfigureOptions<SwaggerGenOptions>
 	{
-		private readonly IApiVersionDescriptionProvider _provider;
-
-		public ConfigureSwaggerGenOptions(IApiVersionDescriptionProvider provider)
-		{
-			_provider = provider;
-		}
-
 		public void Configure(SwaggerGenOptions options)
 		{
-			foreach (var description in _provider.ApiVersionDescriptions)
+			foreach (var description in provider.ApiVersionDescriptions)
 			{
 				options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
 			}
@@ -144,7 +137,7 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 		}
 	}
 
-	public class SwaggerDefaultValues : IOperationFilter
+	internal class SwaggerDefaultValues : IOperationFilter
 	{
 		public void Apply(OpenApiOperation operation, OperationFilterContext context)
 		{
