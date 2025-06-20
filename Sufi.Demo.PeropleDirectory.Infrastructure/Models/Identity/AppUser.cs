@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Sufi.Demo.PeopleDirectory.Domain.Contracts;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sufi.Demo.PeropleDirectory.Infrastructure.Models.Identity
 {

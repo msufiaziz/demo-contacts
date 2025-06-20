@@ -8,6 +8,7 @@ on:
     branches: [ "main", "feature/**" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,14 +20,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -o ${{ secrets.REPO_ARTIFACT_DIR }}\demo-contact
+      run: dotnet build --no-restore -o "${{ vars.ARTIFACT_DIR }}/output"
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.0.0
       with:
         name: demo-contact-artifact-${{ github.run_id }}-${{ github.run_attempt }}
-        path: ${{ secrets.REPO_ARTIFACT_DIR }}\demo-contact
+        path: "${{ vars.ARTIFACT_DIR }}/output"
 
   publish:
     runs-on: self-hosted
@@ -38,13 +39,10 @@ jobs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: 'ui\Sufi.Demo.PeopleDirectory.UI\Server\appsettings.json'
+        files: 'ui/Sufi.Demo.PeopleDirectory.UI/Server/appsettings.json'
       env:
         ConnectionStrings.DefaultConnectionString: ${{ secrets.CONNECTIONSTRING }}
-    - name: Publish to IIS
+    - name: Publish to Services
       run: |
-          Stop-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
-          Stop-WebAppPool -Name ${{ secrets.IIS_APP_POOL }}
-          dotnet publish "${{ github.workspace }}\$BUILD_PROJ" -c Release -o ${{ secrets.IIS_DEPLOY_DIR }}
-          Start-WebAppPool -Name ${{ secrets.IIS_APP_POOL }}
-          Start-Website -Name ${{ secrets.IIS_WEBSITE_NAME }}
+          dotnet publish "${{ github.workspace }}/${{ vars.BUILD_PROJ }}" -c Release -o ${{ vars.DEPLOY_DIR }}
+          sudo systemctl restart ${{ vars.APP_NAME }}
