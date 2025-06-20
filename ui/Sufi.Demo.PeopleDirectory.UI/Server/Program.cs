@@ -1,3 +1,4 @@
+using OpenTelemetry.Metrics;
 using Quartz;
 using Serilog;
 using Sufi.Demo.PeopleDirectory.Application.Extensions;
@@ -37,6 +38,14 @@ try
 	services.AddRazorPages();
 
 	services.AddHealthChecks();
+
+	// Add metrics and tracing services.
+	services.AddOpenTelemetry()
+		.WithMetrics(builder =>
+		{
+			builder.AddPrometheusExporter()
+				.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+		});
 
 	services.AddDatabase(configuration);
 
@@ -80,6 +89,9 @@ try
 
 	// Ensure all pending migrations are applied.
 	app.EnsureDatabaseMigration();
+
+	// Configure OpenTelemetry for metrics and tracing.
+	app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 	app.ConfigureSwagger();
 
