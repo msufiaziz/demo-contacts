@@ -10,7 +10,7 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetAll
 	{
 	}
 
-	internal class GetAllContactsQueryHandler(
+	public class GetAllContactsQueryHandler(
 		IUnitOfWork<int> unitOfWork, 
 		IMapper mapper
 		) : IRequestHandler<GetAllContactsQuery, IResult<List<GetAllContactsResponse>>>
