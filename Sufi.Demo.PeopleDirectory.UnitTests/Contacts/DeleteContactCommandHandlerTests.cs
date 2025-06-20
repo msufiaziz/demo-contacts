@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands;
 using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
@@ -8,12 +9,13 @@ namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts
     public class DeleteContactCommandHandlerTests
     {
         private readonly Mock<IUnitOfWork<int>> _unitOfWorkMock;
-        private readonly DeleteContactCommandHandler _handler;
+		private readonly Mock<ILogger<DeleteContactCommandHandler>> _loggerMock = new();
+		private readonly DeleteContactCommandHandler _handler;
 
         public DeleteContactCommandHandlerTests()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork<int>>();
-            _handler = new DeleteContactCommandHandler(_unitOfWorkMock.Object);
+            _handler = new DeleteContactCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object);
         }
 
         [Fact]

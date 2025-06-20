@@ -15,7 +15,7 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
 
 	public class DeleteContactCommandHandler(
 		IUnitOfWork<int> unitOfWork,
-		ILogger<AddEditContactCommandHandler> logger
+		ILogger<DeleteContactCommandHandler> logger
 		) : IRequestHandler<DeleteContactCommand, IResult>
 	{
 		public async Task<IResult> Handle(DeleteContactCommand request, CancellationToken cancellationToken)

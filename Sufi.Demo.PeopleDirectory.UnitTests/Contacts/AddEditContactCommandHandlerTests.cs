@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands;
 using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
@@ -10,13 +11,14 @@ namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts
 	{
 		private readonly Mock<IMapper> _mapperMock;
 		private readonly Mock<IUnitOfWork<int>> _unitOfWorkMock;
+		private readonly Mock<ILogger<AddEditContactCommandHandler>> _loggerMock = new();
 		private readonly AddEditContactCommandHandler _handler;
 
 		public AddEditContactCommandHandlerTests()
 		{
 			_mapperMock = new Mock<IMapper>();
 			_unitOfWorkMock = new Mock<IUnitOfWork<int>>();
-			_handler = new AddEditContactCommandHandler(_mapperMock.Object, _unitOfWorkMock.Object);
+			_handler = new AddEditContactCommandHandler(_mapperMock.Object, _unitOfWorkMock.Object, _loggerMock.Object);
 		}
 
 		[Fact]

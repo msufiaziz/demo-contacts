@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Middlewares\**" />
+    <Content Remove="Middlewares\**" />
+    <EmbeddedResource Remove="Middlewares\**" />
+    <None Remove="Middlewares\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
@@ -32,10 +39,6 @@
     <ProjectReference Include="..\..\..\Sufi.Demo.PeropleDirectory.Infrastructure\Sufi.Demo.PeropleDirectory.Infrastructure.csproj" />
     <ProjectReference Include="..\Client\Sufi.Demo.PeopleDirectory.UI.Client.csproj" />
     <ProjectReference Include="..\Shared\Sufi.Demo.PeopleDirectory.UI.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Middlewares\" />
   </ItemGroup>
 
 
