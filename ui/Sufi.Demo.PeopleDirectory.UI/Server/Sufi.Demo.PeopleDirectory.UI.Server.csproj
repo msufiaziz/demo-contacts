@@ -34,5 +34,9 @@
     <ProjectReference Include="..\Shared\Sufi.Demo.PeopleDirectory.UI.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
+
 
 </Project>

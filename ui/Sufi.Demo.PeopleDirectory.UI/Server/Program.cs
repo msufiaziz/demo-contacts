@@ -4,8 +4,9 @@ using Serilog;
 using Sufi.Demo.PeopleDirectory.Application.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 using Sufi.Demo.PeopleDirectory.UI.Server.Jobs;
-using Sufi.Demo.PeopleDirectory.UI.Server.Middlewares;
+using Sufi.Demo.PeopleDirectory.UI.Server.Options;
 using Sufi.Demo.PeropleDirectory.Infrastructure.Extensions;
+using System.Threading.RateLimiting;
 
 try
 {
@@ -14,6 +15,7 @@ try
 		.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 		.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true);
 	var configuration = builder.Configuration;
+	var rateLimitOptions = configuration.GetSection("RateLimit").Get<RateLimitOptions>()!;
 
 	Log.Logger = new LoggerConfiguration()
 		.ReadFrom.Configuration(configuration)
@@ -38,6 +40,21 @@ try
 	services.AddRazorPages();
 
 	services.AddHealthChecks();
+	services.AddRateLimiter(options =>
+	{
+		// Apply for all requests.
+		options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+			RateLimitPartition.GetFixedWindowLimiter(
+				partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+				factory: partition => new FixedWindowRateLimiterOptions
+				{
+					AutoReplenishment = true,
+					PermitLimit = rateLimitOptions.PermitLimit,
+					Window = TimeSpan.FromSeconds(rateLimitOptions.Window)
+				}));
+
+		options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+	});
 
 	// Add metrics and tracing services.
 	services.AddOpenTelemetry()
@@ -99,7 +116,7 @@ try
 	app.UseStaticFiles();
 
 	app.UseRouting();
-	app.UseMiddleware<RateLimitingMiddleware>(100, TimeSpan.FromMinutes(1));    // Limit to 100 requests per minute per IP.
+	app.UseRateLimiter();
 
 	app.MapHealthChecks("/health");
 	app.MapRazorPages();
