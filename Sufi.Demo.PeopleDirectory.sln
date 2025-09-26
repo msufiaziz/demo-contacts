@@ -38,6 +38,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{6894B7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sufi.Demo.PeopleDirectory.UI.Client.Infrastructure", "Sufi.Demo.PeopleDirectory.UI.Client.Infrastructure\Sufi.Demo.PeopleDirectory.UI.Client.Infrastructure.csproj", "{1266E7DF-3917-46B0-8D90-14AE78491EA5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sufi.Demo.PeopleDirectory.UnitTests", "Sufi.Demo.PeopleDirectory.UnitTests\Sufi.Demo.PeopleDirectory.UnitTests.csproj", "{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +80,10 @@ Global
 		{1266E7DF-3917-46B0-8D90-14AE78491EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1266E7DF-3917-46B0-8D90-14AE78491EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1266E7DF-3917-46B0-8D90-14AE78491EA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +103,8 @@ Global
 		{0EAFFEFA-6FF3-425C-8F4F-7680FBAF07D7} = {F15D83A4-8080-4750-A025-A0151B8B3577}
 		{6894B7DB-6C7B-4DFA-8FCF-C9D3E667B9B2} = {F15D83A4-8080-4750-A025-A0151B8B3577}
 		{1266E7DF-3917-46B0-8D90-14AE78491EA5} = {0EAFFEFA-6FF3-425C-8F4F-7680FBAF07D7}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {01F8753B-392E-48C7-A16A-327BBE2658ED}
+		{D278DEB8-EE96-453E-AD1C-BF0E08F1A70A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {04BF9A3C-F187-44A3-9F34-8BE6D3286782}
