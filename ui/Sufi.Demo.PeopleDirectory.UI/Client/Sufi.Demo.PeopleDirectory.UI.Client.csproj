@@ -21,24 +21,21 @@
     <Folder Include="Pages\Auth\" />
   </ItemGroup>
 
-  <UsingTask TaskName="ComputeFileHash" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
+  <UsingTask TaskName="ComputeHtmlTicks" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Ticks ParameterType="System.String" Output="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Security.Cryptography" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
           Ticks = DateTime.UtcNow.Ticks.ToString();
-          return true;
         ]]>
       </Code>
     </Task>
   </UsingTask>
 
-  <UsingTask TaskName="ReplaceTokenInFile" TaskFactory="CodeTaskFactory" AssemblyName="Microsoft.Build.Tasks.Core">
+  <UsingTask TaskName="ReplaceTokenInFile" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <TemplateFile ParameterType="System.String" Required="true" />
       <OutputFile ParameterType="System.String" Required="true" />
@@ -53,24 +50,19 @@
           var content = File.ReadAllText(TemplateFile);
           content = content.Replace(Token, Replacement);
           File.WriteAllText(OutputFile, content);
-          return true;
         ]]>
       </Code>
     </Task>
   </UsingTask>
 
   <Target Name="InjectHtmlTicks" BeforeTargets="Build;Publish">
-    <ComputeFileHash>
+    <ComputeHtmlTicks>
       <Output TaskParameter="Ticks" PropertyName="HtmlTicks" />
-    </ComputeFileHash>
+    </ComputeHtmlTicks>
     
     <Message Text="Computed Ticks: $(HtmlTicks)" Importance="Normal" />
 
     <!-- write wwwroot/index.html from template -->
-    <ReplaceTokenInFile
-        TemplateFile="$(MSBuildProjectDirectory)\wwwroot\index.template.html"
-        OutputFile="$(MSBuildProjectDirectory)\wwwroot\index.html"
-        Token="__HTML_TICKS__"
-        Replacement="$(HtmlTicks)" />
+    <ReplaceTokenInFile TemplateFile="$(MSBuildProjectDirectory)\wwwroot\index.template.html" OutputFile="$(MSBuildProjectDirectory)\wwwroot\index.html" Token="__HTML_TICKS__" Replacement="$(HtmlTicks)" />
   </Target>
 </Project>
