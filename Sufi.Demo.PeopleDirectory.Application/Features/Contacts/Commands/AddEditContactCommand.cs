@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 using Sufi.Demo.PeopleDirectory.Shared.Wrapper;
 using System.ComponentModel.DataAnnotations;
@@ -55,11 +55,8 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
 				var contact = await unitOfWork.Repository<Contact>().GetByIdAsync(command.Id);
 				if (contact != null)
 				{
-					contact.Email = command.Email;
-					contact.Hobby = command.Hobby;
-					contact.Phone = command.Phone;
-					contact.UserName = command.UserName;
-					contact.SkillSets = command.SkillSets;
+					mapper.Map(command, contact);
+
 					await unitOfWork.Repository<Contact>().UpdateAsync(contact);
 					await unitOfWork.Commit(cancellationToken);
 

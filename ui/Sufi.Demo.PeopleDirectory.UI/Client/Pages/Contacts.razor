@@ -103,11 +103,11 @@
 
 	private async Task OnButtonCreateClicked()
 	{
-		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialogOptions = new DialogOptions { BackdropClick = false, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<CreateContactDialog>("Create New Contact", dialogOptions);
 		var dialogResult = await dialog.Result;
 
-		if (dialogResult.Canceled)
+		if (dialogResult!.Canceled)
 		{
 			return;
 		}
@@ -115,7 +115,7 @@
 		loading = true;
 		StateHasChanged();
 
-		var contactData = (AddEditContactCommand)dialogResult.Data;
+		var contactData = (AddEditContactCommand)dialogResult.Data!;
 		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
 		var result = await response.ToResult<int>();
 
@@ -138,10 +138,10 @@
 	async Task OnEditContactClicked(int id)
 	{
 		var dialogParams = new DialogParameters { ["Id"] = id };
-		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialogOptions = new DialogOptions { BackdropClick = false, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<EditContactDialog>("Edit Contact", dialogParams, dialogOptions);
 		var dialogResult = await dialog.Result;
-		if (dialogResult.Canceled)
+		if (dialogResult!.Canceled)
 		{
 			return;
 		}
@@ -149,7 +149,7 @@
 		loading = true;
 		StateHasChanged();
 
-		var contactData = (AddEditContactCommand)dialogResult.Data;
+		var contactData = (AddEditContactCommand)dialogResult.Data!;
 		var response = await Http.PostAsJsonAsync("api/v1/contacts", contactData);
 		var result = await response.ToResult<int>();
 

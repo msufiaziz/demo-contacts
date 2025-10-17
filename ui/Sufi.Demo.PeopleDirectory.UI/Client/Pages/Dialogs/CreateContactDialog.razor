@@ -16,7 +16,7 @@
 
 @code {
 	[CascadingParameter]
-	private MudDialogInstance MudDialog { get; set; } = null!;
+	private IMudDialogInstance MudDialog { get; set; } = null!;
 
 	private AddEditContactCommand request = new();
 	private MudForm? form;
@@ -33,6 +33,6 @@
 			return;
 		}
 
-		MudDialog!.Close(request);
+		MudDialog.Close(request);
 	}
 }
