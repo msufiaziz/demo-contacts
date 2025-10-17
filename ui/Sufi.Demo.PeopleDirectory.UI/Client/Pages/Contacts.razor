@@ -103,7 +103,7 @@
 
 	private async Task OnButtonCreateClicked()
 	{
-		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialogOptions = new DialogOptions { BackdropClick = false, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<CreateContactDialog>("Create New Contact", dialogOptions);
 		var dialogResult = await dialog.Result;
 
@@ -138,7 +138,7 @@
 	async Task OnEditContactClicked(int id)
 	{
 		var dialogParams = new DialogParameters { ["Id"] = id };
-		var dialogOptions = new DialogOptions { DisableBackdropClick = true, CloseButton = true };
+		var dialogOptions = new DialogOptions { BackdropClick = false, CloseButton = true };
 		var dialog = await DialogService.ShowAsync<EditContactDialog>("Edit Contact", dialogParams, dialogOptions);
 		var dialogResult = await dialog.Result;
 		if (dialogResult.Canceled)

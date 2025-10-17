@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands;
-using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 
 namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts

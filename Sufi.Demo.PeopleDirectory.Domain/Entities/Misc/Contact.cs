@@ -1,4 +1,4 @@
-﻿using Sufi.Demo.PeopleDirectory.Domain.Contracts;
+﻿using Sufi.Demo.PeopleDirectory.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

@@ -9,26 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Middlewares\**" />
-    <Content Remove="Middlewares\**" />
-    <EmbeddedResource Remove="Middlewares\**" />
-    <None Remove="Middlewares\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-    <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.21" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.21">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.12.0-beta.1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
-    <PackageReference Include="Quartz.AspNetCore" Version="3.14.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -36,9 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sufi.Demo.PeropleDirectory.Infrastructure\Sufi.Demo.PeropleDirectory.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Sufi.Demo.PeopleDirectory.Persistence\Sufi.Demo.PeopleDirectory.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\Sufi.Demo.PeopleDirectory.Infrastructure\Sufi.Demo.PeopleDirectory.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Sufi.Demo.PeopleDirectory.Persistence\Sufi.Demo.PeopleDirectory.Persistence.csproj" />
     <ProjectReference Include="..\Client\Sufi.Demo.PeopleDirectory.UI.Client.csproj" />
-    <ProjectReference Include="..\Shared\Sufi.Demo.PeopleDirectory.UI.Shared.csproj" />
   </ItemGroup>
 
 

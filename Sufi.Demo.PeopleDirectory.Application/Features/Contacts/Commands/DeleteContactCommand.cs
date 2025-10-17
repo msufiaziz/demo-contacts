@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using Sufi.Demo.PeopleDirectory.Application.Interfaces.Repositories;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 using Sufi.Demo.PeopleDirectory.Shared.Wrapper;
 using System.ComponentModel.DataAnnotations;
@@ -23,7 +23,7 @@ namespace Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands
 			var itemToDelete = await unitOfWork.Repository<Contact>().GetByIdAsync(request.Id);
             if (itemToDelete != null)
             {
-				await unitOfWork.Repository<Contact>().DeleteAsync(itemToDelete);
+				await unitOfWork.Repository<Contact>().DeleteByIdAsync(request.Id);
 				await unitOfWork.Commit(cancellationToken);
 
 				logger.LogInformation("Contact with ID: {Id} deleted.", request.Id);

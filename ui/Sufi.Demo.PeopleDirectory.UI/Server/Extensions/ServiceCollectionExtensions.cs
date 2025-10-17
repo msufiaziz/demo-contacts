@@ -1,17 +1,11 @@
-﻿using Asp.Versioning.ApiExplorer;
-using Asp.Versioning;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
-using Sufi.Demo.PeopleDirectory.Application.Interfaces.Services;
-using Sufi.Demo.PeopleDirectory.UI.Server.Services;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Contexts;
-using Sufi.Demo.PeropleDirectory.Infrastructure.Models.Identity;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Text;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Text;
 using System.Text.Json;
 
 namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
@@ -21,40 +15,6 @@ namespace Sufi.Demo.PeopleDirectory.UI.Server.Extensions
 	/// </summary>
 	public static class ServiceCollectionExtensions
 	{
-		internal static IServiceCollection AddApplicationServices(this IServiceCollection services)
-		{
-			//services.AddTransient<IContactService, ContactService>();
-			return services;
-		}
-
-		internal static IServiceCollection AddCurrentUserService(this IServiceCollection services)
-		{
-			services.AddHttpContextAccessor();
-			services.AddScoped<ICurrentUserService, CurrentUserService>();
-			return services;
-		}
-
-		internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
-			=> services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnectionString")!));
-
-		internal static IServiceCollection AddIdentity(this IServiceCollection services)
-		{
-			services
-				.AddIdentity<AppUser, AppRole>(options =>
-				{
-					options.Password.RequiredLength = 6;
-					options.Password.RequireDigit = false;
-					options.Password.RequireLowercase = false;
-					options.Password.RequireNonAlphanumeric = false;
-					options.Password.RequireUppercase = false;
-					options.User.RequireUniqueEmail = true;
-				})
-				.AddEntityFrameworkStores<ApplicationDbContext>()
-				.AddDefaultTokenProviders();
-
-			return services;
-		}
-
 		internal static void RegisterSwagger(this IServiceCollection services)
 		{
 			services.ConfigureOptions<ConfigureSwaggerGenOptions>();
