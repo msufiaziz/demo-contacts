@@ -55,8 +55,6 @@ namespace Sufi.Demo.PeopleDirectory.Persistence.Contexts
 			var assembly = typeof(ApplicationDbContext).Assembly;
 			builder.ApplyConfigurationsFromAssembly(assembly);
 
-			builder.Entity<AppRole>(entity => entity.ToTable("Roles", "Identity"));
-
 			builder.Entity<IdentityUserRole<string>>(entity => entity.ToTable("UserRoles", "Identity"));
 
 			builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims", "Identity"));

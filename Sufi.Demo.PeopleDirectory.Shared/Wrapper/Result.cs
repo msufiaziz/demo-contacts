@@ -9,7 +9,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 		{
 		}
 
-		public List<string> Messages { get; set; } = new List<string>();
+		public List<string> Messages { get; set; } = [];
 
 		public bool Succeeded { get; set; }
 
@@ -20,7 +20,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 
 		public static IResult Fail(string message)
 		{
-			return new Result { Succeeded = false, Messages = new List<string> { message } };
+			return new Result { Succeeded = false, Messages = [message] };
 		}
 
 		public static IResult Fail(List<string> messages)
@@ -50,7 +50,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 
 		public static IResult Success(string message)
 		{
-			return new Result { Succeeded = true, Messages = new List<string> { message } };
+			return new Result { Succeeded = true, Messages = [message] };
 		}
 
 		public static Task<IResult> SuccessAsync()
@@ -79,7 +79,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 
 		public new static Result<T> Fail(string message)
 		{
-			return new Result<T> { Succeeded = false, Messages = new List<string> { message } };
+			return new Result<T> { Succeeded = false, Messages = [message] };
 		}
 
 		public new static Result<T> Fail(List<string> messages)
@@ -109,7 +109,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 
 		public new static Result<T> Success(string message)
 		{
-			return new Result<T> { Succeeded = true, Messages = new List<string> { message } };
+			return new Result<T> { Succeeded = true, Messages = [message] };
 		}
 
 		public static Result<T> Success(T data)
@@ -119,7 +119,7 @@ namespace Sufi.Demo.PeopleDirectory.Shared.Wrapper
 
 		public static Result<T> Success(T data, string message)
 		{
-			return new Result<T> { Succeeded = true, Data = data, Messages = new List<string> { message } };
+			return new Result<T> { Succeeded = true, Data = data, Messages = [message] };
 		}
 
 		public static Result<T> Success(T data, List<string> messages)

@@ -3,7 +3,7 @@
 		<MudForm @ref="form" Model="request" @bind-IsValid="success" @bind-Errors="errors">
 			<MudTextField Label="Username" Required @bind-Value="request.UserName" />
 			<MudTextField Label="Email" Required @bind-Value="request.Email" />
-			<MudTextField Label="Phone" Required @bind-Value="request.Phone" />
+			<MudTextField Label="Phone" Required @bind-Value="request.Phone" MaxLength="20" />
 			<MudTextField Label="Skill Sets" Required @bind-Value="request.SkillSets" />
 			<MudTextField Label="Hobby" Required @bind-Value="request.Hobby" />
 		</MudForm>
