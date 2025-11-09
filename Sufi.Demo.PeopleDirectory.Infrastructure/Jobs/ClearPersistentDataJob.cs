@@ -1,5 +1,6 @@
 ﻿using Quartz;
 using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Services;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 
 namespace Sufi.Demo.PeopleDirectory.Infrastructure.Jobs
@@ -12,7 +13,7 @@ namespace Sufi.Demo.PeopleDirectory.Infrastructure.Jobs
 	/// </remarks>
 	/// <param name="unitOfWorkInt"></param>
 	/// <param name="unitOfWorkString"></param>
-	public class ClearPersistentDataJob(IUnitOfWork<int> unitOfWorkInt, IUnitOfWork<string> unitOfWorkString) : IJob
+	public class ClearPersistentDataJob(IUnitOfWork<int> unitOfWorkInt, IUnitOfWork<string> unitOfWorkString, IAppCache appCache) : IJob
 	{
 		private const string LastDateDeletedKey = "LastDateDeleted";
 		private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.ffff";
@@ -37,9 +38,6 @@ namespace Sufi.Demo.PeopleDirectory.Infrastructure.Jobs
 				await unitOfWorkInt.Repository<Contact>().DeleteAsync(contact);
 			}
 
-			// Commit the changes to the database.
-			await unitOfWorkInt.Commit(context.CancellationToken);
-
 			// Update the last date deleted in the ServerInfo table.
 			var infoToUpdate = await unitOfWorkString.Repository<ServerInfo>().GetByIdAsync(LastDateDeletedKey);
 			if (infoToUpdate != null)
@@ -55,6 +53,9 @@ namespace Sufi.Demo.PeopleDirectory.Infrastructure.Jobs
 
 			// Commit the changes to the database.
 			await unitOfWorkString.Commit(context.CancellationToken);
+
+			// Clear cache entries related to contacts.
+			await appCache.ResetAsync();
 		}
 	}
 }

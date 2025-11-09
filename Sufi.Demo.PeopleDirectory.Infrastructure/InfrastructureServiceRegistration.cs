@@ -3,6 +3,7 @@ using Quartz;
 using Sufi.Demo.PeopleDirectory.Application.Contracts.Services;
 using Sufi.Demo.PeopleDirectory.Infrastructure.Identity;
 using Sufi.Demo.PeopleDirectory.Infrastructure.Jobs;
+using Sufi.Demo.PeopleDirectory.Infrastructure.Services;
 
 namespace Sufi.Demo.PeopleDirectory.Infrastructure
 {
@@ -10,7 +11,10 @@ namespace Sufi.Demo.PeopleDirectory.Infrastructure
 	{
 		public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
 		{
-			services.AddTransient<ICurrentUserService, CurrentUserService>();
+			services.AddHybridCache();
+
+			services.AddTransient<ICurrentUserService, CurrentUserService>()
+				.AddTransient<IAppCache, AppCache>();
 
 			// Some background jobs here.
 			services.AddQuartz(options =>

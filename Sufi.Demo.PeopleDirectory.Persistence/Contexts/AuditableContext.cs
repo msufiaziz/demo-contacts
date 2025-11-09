@@ -88,7 +88,7 @@ namespace Sufi.Demo.PeopleDirectory.Persistence.Contexts
 			{
 				AuditTrails.Add(auditEntry.ToAudit());
 			}
-			return auditEntries.Where(_ => _.HasTemporaryProperties).ToList();
+			return [.. auditEntries.Where(_ => _.HasTemporaryProperties)];
 		}
 
 		private Task OnAfterSaveChanges(List<AuditEntry> auditEntries, CancellationToken cancellationToken = new())

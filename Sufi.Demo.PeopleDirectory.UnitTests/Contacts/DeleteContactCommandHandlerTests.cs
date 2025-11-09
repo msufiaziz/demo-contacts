@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Services;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Commands;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 
@@ -10,12 +11,13 @@ namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts
     {
         private readonly Mock<IUnitOfWork<int>> _unitOfWorkMock;
 		private readonly Mock<ILogger<DeleteContactCommandHandler>> _loggerMock = new();
+		private readonly Mock<IAppCache> _appCacheMock = new();
 		private readonly DeleteContactCommandHandler _handler;
 
         public DeleteContactCommandHandlerTests()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork<int>>();
-            _handler = new DeleteContactCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object);
+            _handler = new DeleteContactCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object, _appCacheMock.Object);
         }
 
         [Fact]

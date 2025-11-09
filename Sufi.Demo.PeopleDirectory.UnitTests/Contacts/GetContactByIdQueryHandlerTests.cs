@@ -1,6 +1,7 @@
 using AutoMapper;
 using Moq;
 using Sufi.Demo.PeopleDirectory.Application.Contracts.Repositories;
+using Sufi.Demo.PeopleDirectory.Application.Contracts.Services;
 using Sufi.Demo.PeopleDirectory.Application.Features.Contacts.Queries.GetById;
 using Sufi.Demo.PeopleDirectory.Domain.Entities.Misc;
 
@@ -10,13 +11,14 @@ namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts
     {
         private readonly Mock<IUnitOfWork<int>> _unitOfWorkMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly GetContactByIdQueryHandler _handler;
+		private readonly Mock<IAppCache> _appCacheMock = new();
+		private readonly GetContactByIdQueryHandler _handler;
 
         public GetContactByIdQueryHandlerTests()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork<int>>();
             _mapperMock = new Mock<IMapper>();
-            _handler = new GetContactByIdQueryHandler(_unitOfWorkMock.Object, _mapperMock.Object);
+            _handler = new GetContactByIdQueryHandler(_unitOfWorkMock.Object, _mapperMock.Object, _appCacheMock.Object);
         }
 
         [Fact]
@@ -44,8 +46,10 @@ namespace Sufi.Demo.PeopleDirectory.UnitTests.Contacts
 
             _unitOfWorkMock.Setup(u => u.Repository<Contact>().GetByIdAsync(1)).ReturnsAsync(contact);
             _mapperMock.Setup(m => m.Map<GetContactByIdResponse>(contact)).Returns(mappedContact);
+            _appCacheMock.Setup(c => c.GetOrAddAsync(It.IsAny<string>(), It.IsAny<Func<CancellationToken, ValueTask<Contact>>>(), It.IsAny<IEnumerable<string>>(), It.IsAny<TimeSpan?>()))
+                .ReturnsAsync(contact);
 
-            var query = new GetContactByIdQuery { Id = 1 };
+			var query = new GetContactByIdQuery { Id = 1 };
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);

@@ -1,6 +1,5 @@
 using Serilog;
 using Sufi.Demo.PeopleDirectory.UI.Server;
-using Sufi.Demo.PeopleDirectory.UI.Server.Extensions;
 
 try
 {
